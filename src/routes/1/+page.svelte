@@ -1,18 +1,14 @@
 <script>
-	import {Canvas, Layer} from 'svelte-canvas';
+	import GameCanvas from '../../gameCanvas.svelte';
+	import { touches } from '../../gameValue';
+
+	const render = ({ ctx, w, h, t }) => {
+		ctx.save();
+		for (const t of touches) {
+			ctx.fillRect(t.x - 100, t.y - 100, 200, 200);
+		}
+		ctx.restore();
+	}
 </script>
 
-<Canvas
-	on:touchstart={(e) => {
-		e.preventDefault();
-	}}>
-	<Layer render={({
-		context: ctx,
-		width: w,
-		height: h,
-		time: t
-	}) => {
-		ctx.fillStyle = 'black';
-		ctx.fillRect(w/4, h/4, w/2, h/2);
-	}} />
-</Canvas>
+<GameCanvas {render} />
