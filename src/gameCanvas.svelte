@@ -7,6 +7,8 @@
 	} from './gameValue';
 
 	export let render;
+	export let update = () => {};
+	let time = 0;
 </script>
 
 <Canvas
@@ -17,12 +19,15 @@
 	>
 
 	<Layer 
-	 render={({
-	 context: ctx,
-	 width: w,
-	 height: h,
-	 time: t
+		render={({
+		context: ctx,
+		width: w,
+		height: h,
+		time: t
 	 }) => {
-	 render({ ctx, w, h, t });	
+	 const dt = t - time;
+	 render({ ctx, w, h, t });
+	 update({ t, dt });
+	 time = t;
 	 }} />
 </Canvas>
