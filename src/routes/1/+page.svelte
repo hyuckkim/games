@@ -4,10 +4,16 @@
 	import { onMount } from 'svelte';
 	import { GameObject } from '../../component/gameobject';
 
+	let gameStart = 0;
+	const gameEnd = () => (gameStart - p.t + 60000) / 100
+		< 0;
 	const p = {
+		t: 0,
+		s: 0,
 		a: undefined,
 		b: undefined,
 		c: undefined,
+		lc: undefined,
 		d: () => {
 			if (!(p.a && p.b && p.c)) return undefined;
 			const d = {
@@ -35,6 +41,8 @@
 			ctx.save();
 			ctx.beginPath();
 			ctx.fillStyle = '#111';
+			ctx.font = '12px Fira Sans';
+			ctx.textAlign = 'left';
 			ctx.moveTo(0, 2);
 			ctx.lineTo(100, 2);
 			ctx.lineTo(98, 4);
@@ -44,18 +52,65 @@
 			ctx.lineTo(0, -2);
 			ctx.fill();
 			ctx.rotate(-this.rotate);
-			ctx.fillText(
-				((this.rotate / Math.PI * 180 + 450) % 360)
-				.toFixed(6), 
+			ctx.fillText(normAngle(this.rotate)
+				.toFixed(4), 
 				50, -20
-			);
+			),
 			ctx.restore();
 		},
+		arr: function(ctx) {
+			ctx.beginPath();
+			ctx.fillStyle = '#111';
+			ctx.moveTo(0, 2);
+			ctx.lineTo(100, 2);
+			ctx.lineTo(98, 4);
+			ctx.lineTo(105, 0);
+			ctx.lineTo(98, -4);
+			ctx.lineTo(100, -2);
+			ctx.lineTo(0, -2);
+			ctx.fill();
+			ctx.restore();
+		},
+		
 	}
 	const arrow = new GameObject({ draw: draw.arrow });
 	const arrows = [];
+	const normAngle = rad => {
+		return (rad / Math.PI * 180 + 450) % 360
+	}
+	const toRad = ang => {
+		return (ang - 90) / 180 * Math.PI;
+	}
+	const newEnemy = () => {
+		const rotate = Math.floor(Math.random() * 360);
+		return new GameObject({
+			draw: (ctx) => {
+				ctx.save();
+				ctx.beginPath();
+				ctx.moveTo(150, 10);
+				ctx.lineTo(150, -10);
+				ctx.lineTo(158, 0);
+				ctx.fill();
+				ctx.restore();
+			},
+			rotate: toRad(rotate),
+			angle: rotate,
+		});
+	}
+	const enemy = [
+		newEnemy(),
+		newEnemy(),
+		newEnemy(),
+		newEnemy(),
+		newEnemy()
+	];
 
 	const onStart = f => {
+		if (!gameStart) {
+			gameStart = p.t;
+			return;
+		}
+		if (gameEnd()) return;
 		if (p.a === undefined) {
 			p.a = touch.get(f);
 			return;
@@ -78,15 +133,13 @@
 	const onEnd = f => {
 		if (p.a.id === f) {
 			p.a = undefined;
-			return;
 		}
 		if (p.b.id === f) {
 			p.b = undefined;
-			return;
 		}
 		if (p.c.id === f) {
 			const a = new GameObject({
-				draw: draw.arrow, 
+				draw: draw.arr, 
 				update: function({ dt }) {
 					const speed = 3;
 					this.pos.x += Math.cos(this.rotate)*speed*dt;
@@ -95,11 +148,10 @@
 				},
 				pos: {x: p.c.x, y: p.c.y},
 				rotate: p.d(),
-				life: 2000,
+				life: 500,
 			});
 			arrows.push(a);
 			p.c = undefined;
-			return;
 		}
 	};
 	onMount(() => {
@@ -113,39 +165,86 @@
 	});
 
 	const render = ({ ctx, w, h, t }) => {
-		ctx.save();
-		ctx.fillStyle = '#273';
-		ctx.fillRect(0, 0, w, h);
+		if (gameStart) {
+			ctx.save();
+			ctx.fillStyle = '#273';
+			ctx.fillRect(0, 0, w, h);
 
-		for (const a of arrows) {
-			a.drawing(ctx);
-		}
-
-		if (p.a && p.b) {
-			ctx.beginPath();
-			ctx.strokeStyle = '#eee';
-			ctx.lineWidth = 1;
-			ctx.moveTo(p.a.x, p.a.y);
-			if (p.c) {
-				ctx.lineTo(p.c.x, p.c.y);
+			for (const a of arrows) {
+				a.drawing(ctx);
 			}
-			ctx.lineTo(p.b.x, p.b.y);
-			ctx.stroke();
-		}
 
-		if (p.a && p.b && p.c) {
-			arrow.pos = p.c;
-			arrow.rotate = p.d();
-			arrow.drawing(ctx);
+			if (p.a && p.b) {
+				ctx.beginPath();
+				ctx.strokeStyle = '#eee';
+				ctx.lineWidth = 1;
+				ctx.moveTo(p.a.x, p.a.y);
+				if (p.c) {
+					ctx.lineTo(p.c.x, p.c.y);
+				}
+				ctx.lineTo(p.b.x, p.b.y);
+				ctx.stroke();
+			}
+
+			if (p.a && p.b && p.c) {
+				arrow.pos = p.c;
+				arrow.rotate = p.d();
+				arrow.drawing(ctx);
+			}
+
+			ctx.fillStyle = '#111';
+			ctx.textAlign = 'left';
+			ctx.font = '20px Fira Sans';
+			ctx.fillText('Targets: ', 0, 20);
+			ctx.font = '14px Fira Sans';
+			for (const i in enemy) {
+				ctx.fillText(`${enemy[i].angle} ± 5.0`, 
+					10, 40 + i * 15);
+				enemy[i].pos = p.c ?? p.lc ?? {x: w/2, y: h/2};
+				enemy[i].drawing(ctx);
+			}
+
+			ctx.font = '22px Fira Sans';
+			ctx.textAlign = 'center';
+			ctx.fillText(Math.max(
+				(gameStart - t + 60000) / 1000,
+				0)
+				.toFixed(0),	w / 2, 30);
+
+			ctx.font = '20px Fira Sans';
+			ctx.textAlign = 'right';
+			ctx.fillText(`Score: ${p.s}`, w - 10, 20);
+			ctx.restore();
+		} else {
+			ctx.save();
+			ctx.fillStyle = '#273';
+			ctx.fillRect(0, 0, w, h);
+			ctx.fillStyle = '#fff';
+			ctx.beginPath();
+			ctx.moveTo(w / 2 - 94, h / 2 - 100);
+			ctx.lineTo(w / 2 - 94, h / 2 + 100);
+			ctx.lineTo(w / 2 + 94, h / 2);
+			ctx.fill();
+
+			ctx.restore();
 		}
-		ctx.restore();
 	}
 	const update = ({ t, dt }) => {
+		p.t = t;
+		if (p.c) p.lc = p.c;
 		for (const a of arrows) {
 			a.update({ t, dt });
 		}
 		for (let i = 0; i < arrows.length; i++) {
 			if (arrows[i].life < 0) {
+				for (const j in enemy) {
+					const angle = normAngle(arrows[i].rotate)
+					if (angle > enemy[j].angle - 5 
+						&& angle < enemy[j].angle + 5) {
+						p.s++;
+						enemy[j] = newEnemy();
+					}
+				}
 				arrows.splice(i, 1);
 				i--;
 			}
