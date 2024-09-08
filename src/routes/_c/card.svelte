@@ -1,4 +1,6 @@
 <script>
+	import { base } from '$app/paths';
+
 	export let title;
 	export let description;
 	export let link;
@@ -11,7 +13,7 @@
 			<p>{description}</p>
 		</article>
 	</div>
-	<a href={link}>play</a>
+	<a href={`${base}${link}`}>play</a>
 </section>
 
 <style>
