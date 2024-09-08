@@ -36,6 +36,12 @@
 		}
 	};
 
+	const angleText = [
+		'북', '북북동', '북동', '동북동',
+		'동', '동남동', '남동', '남남동', 
+		'남', '남남서', '남서', '서남서',
+		'서', '서북서', '북서', '북북서',
+	];
 	const draw = {
 		arrow: function(ctx) {
 			ctx.save();
@@ -82,7 +88,7 @@
 		return (ang - 90) / 180 * Math.PI;
 	}
 	const newEnemy = () => {
-		const rotate = Math.floor(Math.random() * 360);
+		const rotate = Math.floor(Math.random() * 16);
 		return new GameObject({
 			draw: (ctx) => {
 				ctx.save();
@@ -93,17 +99,11 @@
 				ctx.fill();
 				ctx.restore();
 			},
-			rotate: toRad(rotate),
+			rotate: toRad(rotate * 22.5),
 			angle: rotate,
 		});
 	}
-	const enemy = [
-		newEnemy(),
-		newEnemy(),
-		newEnemy(),
-		newEnemy(),
-		newEnemy()
-	];
+	let enemy = newEnemy();
 
 	const onStart = f => {
 		if (!gameStart) {
@@ -148,7 +148,7 @@
 				},
 				pos: {x: p.c.x, y: p.c.y},
 				rotate: p.d(),
-				life: 500,
+				life: 300,
 			});
 			arrows.push(a);
 			p.c = undefined;
@@ -195,14 +195,12 @@
 			ctx.fillStyle = '#111';
 			ctx.textAlign = 'left';
 			ctx.font = '20px Fira Sans';
-			ctx.fillText('Targets: ', 0, 20);
+			ctx.fillText('Next target: ', 0, 20);
 			ctx.font = '14px Fira Sans';
-			for (const i in enemy) {
-				ctx.fillText(`${enemy[i].angle} ± 5.0`, 
-					10, 40 + i * 15);
-				enemy[i].pos = p.c ?? p.lc ?? {x: w/2, y: h/2};
-				enemy[i].drawing(ctx);
-			}
+			ctx.fillText(`${angleText[enemy.angle]}`, 
+				10, 40);
+			// enemy.pos = p.c ?? p.lc ?? {x: w/2, y: h/2};
+			// enemy.drawing(ctx);
 
 			ctx.font = '22px Fira Sans';
 			ctx.textAlign = 'center';
@@ -237,14 +235,12 @@
 		}
 		for (let i = 0; i < arrows.length; i++) {
 			if (arrows[i].life < 0) {
-				for (const j in enemy) {
 					const angle = normAngle(arrows[i].rotate)
-					if (angle > enemy[j].angle - 5 
-						&& angle < enemy[j].angle + 5) {
+					if (angle > enemy.angle * 22.5 - 12 
+						&& angle < enemy.angle * 22.5 + 12) {
 						p.s++;
-						enemy[j] = newEnemy();
+						enemy = newEnemy();
 					}
-				}
 				arrows.splice(i, 1);
 				i--;
 			}
