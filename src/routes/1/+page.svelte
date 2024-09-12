@@ -131,12 +131,6 @@
 		}
 	};
 	const onEnd = f => {
-		if (p.a.id === f) {
-			p.a = undefined;
-		}
-		if (p.b.id === f) {
-			p.b = undefined;
-		}
 		if (p.c.id === f) {
 			const a = new GameObject({
 				draw: draw.arr, 
@@ -245,6 +239,12 @@
 				i--;
 			}
 		}
+		if (p.a && !touch.validate(p.a.id, p.a.t))
+			p.a = undefined;
+		if (p.b && !touch.validate(p.b.id, p.b.t))
+			p.b = undefined;
+		if (p.c && !touch.validate(p.c.id, p.c.t))
+			p.c = undefined;
 	}
 
 	function distanceToLineSegment(p1, p2, p) {
