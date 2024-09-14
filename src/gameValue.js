@@ -1,3 +1,21 @@
+export class TouchInfo {
+	constructor(x, y, id, time) {
+		this.x = x;
+		this.y = y;;
+		this.id = id;
+		this.time = time;
+	}
+	validate() {
+		return touch.validate(this.id, this.t);
+	}
+	updatePos(x, y) {
+		this.lx = this.x;
+		this.ly = this.y;
+		this.x = x;
+		this.y = y;
+	}
+}
+
 export const touch = {
 	all: [],
 	get: (id, t) => touch.all.filter(

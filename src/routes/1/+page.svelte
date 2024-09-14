@@ -13,7 +13,6 @@
 		a: undefined,
 		b: undefined,
 		c: undefined,
-		lc: undefined,
 		d: () => {
 			if (!(p.a && p.b && p.c)) return undefined;
 			const d = {
@@ -193,8 +192,6 @@
 			ctx.font = '14px Fira Sans';
 			ctx.fillText(`${angleText[enemy.angle]}`, 
 				10, 40);
-			// enemy.pos = p.c ?? p.lc ?? {x: w/2, y: h/2};
-			// enemy.drawing(ctx);
 
 			ctx.font = '22px Fira Sans';
 			ctx.textAlign = 'center';
@@ -223,7 +220,6 @@
 	}
 	const update = ({ t, dt }) => {
 		p.t = t;
-		if (p.c) p.lc = p.c;
 		for (const a of arrows) {
 			a.update({ t, dt });
 		}
@@ -239,11 +235,11 @@
 				i--;
 			}
 		}
-		if (p.a && !touch.validate(p.a.id, p.a.t))
+		if (!p.a?.validate())
 			p.a = undefined;
-		if (p.b && !touch.validate(p.b.id, p.b.t))
+		if (!p.b?.validate())
 			p.b = undefined;
-		if (p.c && !touch.validate(p.c.id, p.c.t))
+		if (!p.c?.validate())
 			p.c = undefined;
 	}
 
@@ -268,7 +264,7 @@
 		return Math.sqrt(
 			(p.x - projectionX) ** 2 + (p.y - projectionY) ** 2
 		);
-}
+	}
 </script>
 
 <GameCanvas {render} {update} />

@@ -1,6 +1,6 @@
 <script>
 	import {Canvas, Layer} from 'svelte-canvas';
-	import { touch } from './gameValue';
+	import { TouchInfo, touch } from './gameValue';
 
 	export let render;
 	export let update = () => {};
@@ -10,12 +10,13 @@
 		e.preventDefault();
 		for (let i = 0; i < e.changedTouches.length; i++) {
 			const t = e.changedTouches[i];
-			touch.all = [...touch.all, {
-				x: t.clientX,
-				y: t.clientY,
-				id: t.identifier,
-				t: time
-			}];
+			const newTouch = new TouchInfo(
+				t.clientX,
+				t.clientY,
+				t.identifier,
+				time
+			);
+			touch.all = [...touch.all, newTouch];
 			for (const e of touch.startEvents) {
 				e(t.identifier);
 			}
@@ -28,8 +29,7 @@
 			const t = e.changedTouches[i];
 			for (const o of touch.all) {
 				if (t.identifier === o.id) {
-					o.x = t.clientX;
-					o.y = t.clientY;
+					o.updatePos(t.clientX, t.clientY);
 					for (const e of touch.moveEvents) {
 						e(t.identifier);
 					}
