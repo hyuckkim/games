@@ -1,8 +1,8 @@
 <script>
-	import GameCanvas from '../../gameCanvas.svelte';
-	import { touch } from '../../gameValue';
+	import GameCanvas from '$lib/gameCanvas.svelte';
+	import { touch } from '$lib/touch';
 	import { onMount } from 'svelte';
-	import { GameObject } from '../../component/gameobject';
+	import { GameObject } from '$lib/gameobject';
 
 	let gameStart = 0;
 	const gameEnd = () => (gameStart - p.t + 60000) / 100

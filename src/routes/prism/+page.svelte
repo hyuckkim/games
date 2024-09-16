@@ -5,6 +5,6 @@
 
 <SceneCanvas
 	scene={[
-	menuScene
+	menuScene,
 	]}
 />

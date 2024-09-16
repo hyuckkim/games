@@ -1,6 +1,6 @@
 <script>
 	import GameCanvas from './gameCanvas.svelte';
-	import { touch } from './gameValue';
+	import { touch } from './touch';
 	import { scenes } from './scene';
 	import { onMount } from 'svelte';
 

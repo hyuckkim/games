@@ -115,7 +115,7 @@ export class Block extends GameObject {
 					ctx.fillRect(p.x - 5, p.y - 5, 10, 10);
 				}
 			},
-			update: function () {
+			update: function (dt) {
 				if (this.touches.lengt > 1 
 				&& !this.touches[1].validate()) {
 					this.touches.splice(1, 1);
@@ -124,7 +124,14 @@ export class Block extends GameObject {
 				&& !this.touches[0].validate()) {
 					this.touches.splice(0, 1);
 				}
-			}
+				if (this.pow > 0 && this.touches.length === 0) {
+					this.pos.x += Math.cos(this.powd) * this.pow * dt;
+					this.pos.y += Math.sin(this.powd) * this.pow * dt;
+					this.pow = Math.max(0, this.pow - dt * 0.001);
+				}
+			},
+			pow: 0,
+			powd: 0,
 		});
 	}
 
@@ -144,13 +151,27 @@ export class Block extends GameObject {
 				const n = other.points[j];
 				const np = rotatePoint(n, other.rotate, other.pos);
 				if (m.color === n.color
-				&& distanceThan(mp, np, 20)) {
+				&& distanceThan(mp, np, 20)
+				&& this.isAllowBlock(other, m, n)) {
 					other.points[j] = this
 						.asOthersBlock(other, om, m, n);
 					return true;
 				}
 			}
 		}
+	}
+	isAllowBlock(other, thisPoint, otherPoint) {
+		const moving = p => coord.p(rotatePoint(
+			coord.m(p, thisPoint),
+			(otherPoint.dir + 2 - thisPoint.dir) * Math.PI / 2
+		), otherPoint);
+		for (const b of this.blocks) {
+			const bp = moving(b.pos);
+			for (const c of other.blocks) {
+				if (distanceThan(bp, c.pos, 1)) return false;
+			}
+		}
+		return true;
 	}
 	asOthersBlock(other, rp, thisPoint, otherPoint) {
 		const moving = p => coord.p(rotatePoint(

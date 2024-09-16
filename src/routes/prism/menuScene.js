@@ -53,6 +53,7 @@ const drawBG = ({ ctx, w, h }) => {
 
 const menuScene = new Scene({
 	blocks: [],
+	lastupdate: 0,
 	render: function ({ ctx, w, h, t }) {
 		drawBG({ ctx, w, h });
 		for (const b of this.blocks) {
@@ -61,26 +62,20 @@ const menuScene = new Scene({
 	},
 	update: function ({ t, dt }) {
 		for (const b of this.blocks) {
-			b.update();
+			b.update(dt);
 		}
+		this.lastupdate = t;
 	},
 	start: function () {
-		this.blocks.push(generateRandomBlock({
-			x: 100,
-			y: 200
-		}));
-		this.blocks.push(generateRandomBlock({
-			x: 60,
-			y: 480
-		}));
-		this.blocks.push(generateRandomBlock({
-			x: 170,
-			y: 480
-		}));
-		this.blocks.push(generateRandomBlock({
-			x: 280,
-			y: 480
-		}));
+		for (let i = 0; i < 10; i++) {
+			const newBlock = generateRandomBlock({
+				x: 30,
+				y: 30
+			});
+			newBlock.pow = 0.7;
+			newBlock.powd = Math.random() * Math.PI / 2;
+			this.blocks.push(newBlock);
+		}
 	},
 	quit: function () {
 	},
@@ -94,9 +89,10 @@ const menuScene = new Scene({
 				cur.block = b;
 				this.blocks.splice(this.blocks.indexOf(b), 1);
 				this.blocks.push(b);
-				return;
+				return true;
 			}
 		}
+		return false;
 	},
 	touchMove: function (t) {
 		const cur = touch.get(t);
@@ -132,6 +128,16 @@ const menuScene = new Scene({
 					this.blocks.splice(this.blocks.indexOf(blo), 1);
 					break;
 				}
+			}
+		} else {
+			if (this.lastupdate - cur.time < 100) {
+			const newBlock = generateRandomBlock({
+				x: 30,
+				y: 30
+			});
+			newBlock.pow = 0.7;
+			newBlock.powd = Math.random() * Math.PI / 2;
+			this.blocks.push(newBlock);
 			}
 		}
 	},

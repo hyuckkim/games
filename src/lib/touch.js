@@ -1,7 +1,7 @@
 export class TouchInfo {
 	constructor(x, y, id, time) {
 		this.x = x;
-		this.y = y;;
+		this.y = y;
 		this.id = id;
 		this.time = time;
 	}
