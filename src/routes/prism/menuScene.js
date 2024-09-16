@@ -59,6 +59,11 @@ const menuScene = new Scene({
 		for (const b of this.blocks) {
 			b.drawing(ctx);
 		}
+
+		const longest = [...this.blocks].sort((a, b) =>
+			b.blocks.length - a.blocks.length)[0].blocks.length;
+		ctx.fillStyle = '#000';
+		ctx.fillText(`가장 긴 연결: ${longest}`, 0, 10);
 	},
 	update: function ({ t, dt }) {
 		for (const b of this.blocks) {
