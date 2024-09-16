@@ -1,5 +1,5 @@
 <script>
-	import SceneCanvas from '../../sceneCanvas.svelte';
+	import SceneCanvas from '$lib/sceneCanvas.svelte';
 	import menuScene from './menuScene';
 </script>
 
