@@ -130,7 +130,7 @@
 		}
 	};
 	const onEnd = f => {
-		if (p.c.id === f) {
+		if (p.c && p.c.id === f) {
 			const a = new GameObject({
 				draw: draw.arr, 
 				update: function({ dt }) {
@@ -145,6 +145,15 @@
 			});
 			arrows.push(a);
 			p.c = undefined;
+			return;
+		}
+		if (p.b && p.b.id === f) {
+			p.b = undefined;
+			return;
+		}
+		if (p.a && p.a.id === f) {
+			p.a = undefined;
+			return;
 		}
 	};
 	onMount(() => {

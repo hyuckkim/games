@@ -43,8 +43,8 @@
 		e.preventDefault();
 		for (let i = 0; i < e.changedTouches.length; i++) {
 			const t = e.changedTouches[i];
-			for (const e of touch.endEvents) {
-				e(t.identifier);
+			for (const ev of touch.endEvents) {
+				ev(t.identifier);
 			}
 			touch.all = touch.all.filter(
 				o => t.identifier !== o.id
@@ -58,6 +58,7 @@
 	on:touchstart={touchStart}
 	on:touchmove={touchMove}
 	on:touchend={touchEnd}
+	on:touchcancel={touchEnd}
 	>
 
 	<Layer 
