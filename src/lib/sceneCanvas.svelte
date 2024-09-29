@@ -7,39 +7,23 @@
 	export let scene = [];
 
 	const render = ({ ctx, w, h, t }) => {
-		for (const s of scenes.all.filter(s => s.enabled)) {
-			s.render?.({ ctx, w, h, t });
-		}
+		scenes.current.render?.({ ctx, w, h, t });
 	}
 	const update = ({ t, dt }) => {
-		for (const s of scenes.all.filter(s => s.enabled)) {
-			s.update?.({ t, dt });
-		}
+		scebes.current.render?.({ ctx, w, h, t });
 	}
 	const touchStart = t => {
-		for (const s of scenes.all
-			.filter(s => s.enabled)
-			.toReversed()) {
-			if (s.touchStart?.(t)) return;
-		}
+		scenes.current.touchStart?.(t);
 	}
 	const touchMove = t => {
-		for (const s of scenes.all
-			.filter(s => s.enabled)
-			.toReversed()) {
-			if (s.touchMove?.(t)) return;
-		}
+		scenes.current.touchMove?.(t);
 	}
 	const touchEnd = t => {
-		for (const s of scenes.all
-			.filter(s => s.enabled)
-			.toReversed()) {
-			if (s.touchEnd?.(t)) return;
-		}
+		scenes.current.touchEnd?.(t);
 	}
 	onMount(() => {
-		scene[0]?.enable();
 		scenes.all = scene;
+		scenes.start(scenes[0]);
 
 		touch.register('start', touchStart);
 		touch.register('move', touchMove);
