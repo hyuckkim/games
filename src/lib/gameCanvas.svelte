@@ -8,6 +8,7 @@
 
 	const touchStart = e => {
 		e.preventDefault();
+		try {
 		for (let i = 0; i < e.changedTouches.length; i++) {
 			const t = e.changedTouches[i];
 			const newTouch = new TouchInfo(
@@ -20,11 +21,14 @@
 			for (const e of touch.startEvents) {
 				e(t.identifier);
 			}
+		}} catch (err) {
+			alert(err);
 		}
 	}
 
 	const touchMove = e => {
 		e.preventDefault();
+		try {
 		l: for (let i = 0; i < e.changedTouches.length; i++) {
 			const t = e.changedTouches[i];
 			for (const o of touch.all) {
@@ -36,6 +40,8 @@
 					continue l;
 				}
 			}
+		}} catch (err) {
+			alert(err);
 		}
 	}
 
@@ -43,12 +49,17 @@
 		e.preventDefault();
 		for (let i = 0; i < e.changedTouches.length; i++) {
 			const t = e.changedTouches[i];
-			for (const ev of touch.endEvents) {
-				ev(t.identifier);
+			try {
+				for (const ev of touch.endEvents) {
+					ev(t.identifier);
+				}} catch (err) {
+					alert(err);
+				}
+			finally {
+				touch.all = touch.all.filter(
+					o => t.identifier !== o.id
+				);
 			}
-			touch.all = touch.all.filter(
-				o => t.identifier !== o.id
-			);
 		}
 	}
 </script>
@@ -68,11 +79,15 @@
 		height: h,
 		time: t
 	 }) => {
+	 try {
 	 const dt = t - time;
 	 ctx.save();
 	 render({ ctx, w, h, t });
 	 update({ t, dt });
 	 ctx.restore();
 	 time = t;
+	 } catch (err) {
+	 	alert(err);
+	 }
 	 }} />
 </Canvas>
