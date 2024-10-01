@@ -7,23 +7,23 @@
 	export let scene = [];
 
 	const render = ({ ctx, w, h, t }) => {
-		scenes.current.render?.({ ctx, w, h, t });
+		scenes.current?.render?.({ ctx, w, h, t });
 	}
 	const update = ({ t, dt }) => {
-		scebes.current.render?.({ ctx, w, h, t });
+		scenes.current?.update?.({ t, dt });
 	}
 	const touchStart = t => {
-		scenes.current.touchStart?.(t);
+		scenes.current?.touchStart?.(t);
 	}
 	const touchMove = t => {
-		scenes.current.touchMove?.(t);
+		scenes.current?.touchMove?.(t);
 	}
 	const touchEnd = t => {
-		scenes.current.touchEnd?.(t);
+		scenes.current?.touchEnd?.(t);
 	}
 	onMount(() => {
 		scenes.all = scene;
-		scenes.start(scenes[0]);
+		scenes.start(scene[0]);
 
 		touch.register('start', touchStart);
 		touch.register('move', touchMove);

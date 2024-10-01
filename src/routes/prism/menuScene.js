@@ -2,6 +2,7 @@ import { Scene } from '$lib/scene';
 import { touch } from '$lib/touch';
 
 import { Block } from './block';
+import {drawBG} from './drawing';
 
 const rnd = num => Math.floor(Math.random() * num);
 
@@ -34,22 +35,6 @@ function generateRandomBlock(pos) {
 	);
 }
 
-const drawBG = ({ ctx, w, h }) => {
-	ctx.save();
-	ctx.fillStyle = '#aaa';
-	ctx.strokeStyle = '#999';
-	ctx.fillRect(0, 0, w, h);
-	ctx.beginPath();
-	for (let i = 10; i < w + h; i += 10) {
-		if (i < w)
-			ctx.moveTo(i, 0);
-		else
-			ctx.moveTo(w, i - w);
-		ctx.lineTo(0, i);
-	}
-	ctx.stroke();
-	ctx.restore();
-}
 
 const menuScene = new Scene({
 	blocks: [],
