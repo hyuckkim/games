@@ -2,29 +2,24 @@ import { Scene } from '$lib/scene';
 import { touch } from '$lib/touch';
 
 import { Block } from './block';
-import {drawBG} from './drawing';
+import { drawBG } from './drawing';
+import { colors } from './colors';
 
 const rnd = num => Math.floor(Math.random() * num);
 
 function generateRandomBlock(pos) {
-	const colors = [
-		'#ff595e',
-		'#ffca3a',
-		'#8ac926',
-		'#1982c4',
-		'#6a4c93'
-	];
+	const colorArr = [...colors.get()];
 	const startIdx = rnd(5);
-	const start = colors[startIdx];
-	colors.splice(startIdx, 1);
+	const start = colorArr[startIdx];
+	colorArr.splice(startIdx, 1);
 
 	const endIdx = rnd(4);
-	const end = colors[endIdx];
-	colors.splice(endIdx, 1);
+	const end = colorArr[endIdx];
+	colorArr.splice(endIdx, 1);
 	
 	const centerIdx = rnd(3);
 	const center = Math.random() < 0.3
-		? colors[centerIdx]
+		? colorArr[centerIdx]
 		: undefined;
 
 	return new Block(
@@ -68,6 +63,7 @@ const menuScene = new Scene({
 		}
 	},
 	quit: function () {
+		this.blocks = [];
 	},
 	touchStart: function (t) {
 		const cur = touch.get(t);
